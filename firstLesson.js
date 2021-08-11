@@ -5,7 +5,7 @@ const app = express()
 const products = require('./product.router.js')
 const categories = require('./categories.router')
 app.use("/products",products) // for futher reference read the express router documentation
-app.use("/categories",categories)
+app.use("/categories",categories) // this is also a middleware
 
 app.get('/',(req,res) => {
     res.send("<h1> Hello Express App </h1>")

@@ -3,6 +3,28 @@ const router = express.Router()
 const bodyParser = require('body-parser')
 router.use(bodyParser.json())
 
+const myLogger = (req,res,next) => {  // This is a middleware that logs the req and response 
+    console.log('Incoming... req Method is :',req.method)
+    // res.send({test:'Tesing by hacking the app and bypassing the response !'}) 
+    next()  
+    // The next method is the propagate the request without it none of the below code will be executed
+}
+// to furthur cleear doubts regarding the next method try commenting out the line where the next method si called and then
+// make a request and see what happens
+// Ans: the request is pot processed at all as the middleware that sits in between is blocking it
+const reqTime = (req,res,next) => { // this middlewrare adds a reqTime prop to the req object
+    req.reqTime = new Date()
+    console.log(req.reqTime)
+    next()
+}
+
+const showParams = ({params},_,next) => {
+    console.log('The Params are:' , params)
+    next()
+}
+
+router.use(myLogger,reqTime)
+router.use("/:id",showParams)
 
 const products = [
     {
@@ -41,6 +63,7 @@ router.route('/') // this will handle all get and post actions on the path : '/p
 
 router.route('/:id')
 .get((req,res) => {
+    console.log(req.query)
     const {id} = req.params
     const product = products.find(product => product.id===parseInt(id))
     product ? res.json(product) : res.status(404).json({success:false,message:'product not found :('})
